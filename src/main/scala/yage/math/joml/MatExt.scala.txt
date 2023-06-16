@@ -1,0 +1,79 @@
+package yage.joml
+
+import org.joml.Matrix3f
+import org.joml.Matrix4f
+import org.joml.Vector3f
+
+// i = row index, j = column index
+
+// toLookAt, toLookAlong, toArcBall
+
+trait MatExt:
+
+  extension (m: Matrix4f)
+
+    def apply(r: Int, c: Int) = m.get(c, r)
+    def update(r: Int, c: Int, s: Float) = m.set(c, r, s)
+
+    def trace = m(0, 0) + m(1, 1) + m(2, 2) + m(3, 3)
+    def determinant = m.determinant()
+
+    def multiply(n: Matrix4f) = m.mul(n)
+
+    def transpose() = m.transpose()
+    def transposed() = Matrix4f(m).transpose()
+
+    def invert() = m.invert()
+    def inverted() = Matrix4f(m).invert()
+
+    def toZero() = m.foreach((i, j) => m(i, j) = 0)
+    def toOne() = m.identity()
+    def toRandom(min: Float, max: Float) = 0
+
+    def toProductOf(n1: Matrix4f, n2: Matrix4f) = n1.mul(n2, m)
+
+    def toScalele(s: Float) = m.scaling(s)
+    def toRotation(x: Float, y: Float, z: Float, a: Float) = m.rotation(a, x, y, z)
+    def toRotation(axis: Vector3f, angle: Float) = m.rotation(angle, axis)
+    def toRotationX(a: Float) = m.rotationX(a)
+    def toRotationY(a: Float) = m.rotationX(a)
+    def toRotationZ(a: Float) = m.rotationX(a)
+    def toTranslation(x: Float, y: Float, z: Float) = m.translation(x, y, z)
+    def toTranslation(v: Vector3f) = m.translation(v)
+
+    def toOrtho(l: Float, r: Float, b: Float, t: Float, n: Float, f: Float) = m.identity().ortho(l, r, b, t, n, f)
+    def toFrustum(l: Float, r: Float, b: Float, t: Float, n: Float, f: Float) = m.identity().frustum(l, r, b, t, n, f)
+    def toPerspective() = 0
+
+    def toReflection = 0 // reflection
+
+    def leftScale(s: Float) = m.scaleLocal(s)
+    def leftRotate(x: Float, y: Float, z: Float, a: Float) = m.rotateLocal(a, x, y, z)
+    def leftRotate(v: Vector3f, a: Float) = m.rotateLocal(a, v.x, v.y, v.z)
+    def leftRotateX(a: Float) = m.rotateLocalX(a)
+    def leftRotateY(a: Float) = m.rotateLocalY(a)
+    def leftRotateZ(a: Float) = m.rotateLocalZ(a)
+    def leftTranslate(x: Float, y: Float, z: Float) = m.translateLocal(x, y, z)
+    def leftTranslate(v: Vector3f) = m.translateLocal(v)
+    
+    def rightScale(s: Float) = m.scale(s)
+    def rightRotate(x: Float, y: Float, z: Float, a: Float) = m.rotate(a, x, y, z)
+    def rightRotate(v: Vector3f, a: Float) = m.rotate(a, v.x, v.y, v.z)
+    def rightRotateX(a: Float) = m.rotateX(a)
+    def rightRotateY(a: Float) = m.rotateY(a)
+    def rightRotateZ(a: Float) = m.rotateZ(a)
+    def rightTranslate(x: Float, y: Float, z: Float) = m.translate(x, y, z)
+    def rightTranslate(v: Vector3f) = m.translate(v)
+
+    def transformDir(dir: Vector3f) = m.transformDirection(dir)
+    def transformDir(dir: Vector3f, res: Vector3f) = m.transformDirection(dir, res)
+    def transformPos(pos: Vector3f) = m.transformPosition(pos)
+    def transformPos(pos: Vector3f, res: Vector3f) = m.transformPosition(pos, res)
+
+    def foreach(f: (Int, Int) => Unit) = 
+      for r <- 0 to 3 do
+        for c <- 0 to 3 do 
+          f(r, c)
+      m
+
+    // operators

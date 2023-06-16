@@ -1,0 +1,3 @@
+package yage.joml
+
+trait JomlExt extends VecExt, MatExt

@@ -1,0 +1,58 @@
+package yage.joml
+
+import org.joml.Vector3f
+import java.nio.ByteBuffer
+
+trait VecExt:
+
+  extension (v: Vector3f)
+
+    def apply(i: Int) = v.get(i)
+    // def update(i: Int, s: Float) =
+
+    def set(w: Vector3f) = v.set(w)
+
+    def normalize() = v.normalize()
+    def normalized() = 0
+    def negate = v.negate()
+    def negated() = 0
+
+    def add(w: Vector3f) = v.add(w)
+    def add(s: Float, w: Vector3f) = w.mulAdd(s, v, v)
+    def subtract(w: Vector3f) = v.sub(w)
+    def subtract(s: Float, w: Vector3f) = w.mulAdd(-s, v, v)
+    def multiply(s: Float) = v.mul(s)
+
+    def dot(w: Vector3f) = v.dot(w)
+    def cross(w: Vector3f) = v.cross(w)
+
+    def length = v.length()
+    def lengthSquared = v.lengthSquared()
+    def distance(w: Vector3f) = v.distance(w)
+    def distanceSquared(w: Vector3f) = v.distanceSquared(w)
+
+    def angle(w: Vector3f) = v.angle(w)
+
+    def toSumOf(w1: Vector3f, w2: Vector3f) = v.set(w1).add(w2)
+    def toSumOf(s1: Float, w1: Vector3f, s2: Float, w2: Vector3f) = 0
+    // ...
+    def toCrossOf(w1: Vector3f, w2: Vector3f) = w1.cross(w2, v)
+    
+
+
+
+    
+    def load(buf: ByteBuffer) = v.set(buf)
+    def load(buf: ByteBuffer, off: Int) = v.set(off, buf)
+    def store(buf: ByteBuffer) = v.get(buf)
+    def store(buf: ByteBuffer, off: Int) = v.get(off, buf)
+
+    def :=(w: Vector3f) = v.set(w)
+
+    def +=(w: Vector3f) = v.add(w)
+    def -=(w: Vector3f) = v.sub(w)
+    def *=(s: Float) = v.mul(s)
+
+    def =+(w1: Vector3f, w2: Vector3f) = v.set(w1).add(w2)
+    def =+(s1: Float, w1: Vector3f, s2: Float, w2: Vector3f) = 0
+    // ...

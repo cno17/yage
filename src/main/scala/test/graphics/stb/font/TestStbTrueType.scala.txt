@@ -1,0 +1,64 @@
+package test.graphics.stb
+
+import org.lwjgl.BufferUtils
+// import org.lwjgl.nuklear.Nuklear.nk_init
+// import org.lwjgl.nuklear.{NkAllocator, NkContext, NkUserFont}
+import org.lwjgl.stb.*
+import org.lwjgl.stb.STBTruetype.*
+import org.lwjgl.system.MemoryUtil.{nmemAllocChecked, nmemFree}
+import java.io.File
+import yage.util.FileExt
+
+// thanks to justin meiners
+
+object TestStbTrueType extends FileExt:
+
+	def main(args: Array[String]) =
+		// how to read bytes in scala?
+		val ttf = bytesOf(File("FiraSans-Regular.ttf"))
+		val info = STBTTFontinfo.create
+		stbtt_InitFont(info, ttf)
+		val scale = stbtt_ScaleForPixelHeight(info, 48)
+		val text = "the quick brown fox"
+		// use stack
+		// create class FontInfo in package vage.font.tt
+		val pAscent = BufferUtils.createIntBuffer(1)
+		val pDescent = BufferUtils.createIntBuffer(1)
+		val pLineGap = BufferUtils.createIntBuffer(1)
+		stbtt_GetFontVMetrics(info, pAscent, pDescent, pLineGap);
+
+		val ascent = Math.round(pAscent.get(0) * scale)
+		val descent = Math.round(pDescent.get(0) * scale)
+
+		for c <- text do
+			// how wide is this character
+			var pAW = BufferUtils.createIntBuffer(1) // advance width
+			var pLSB = BufferUtils.createIntBuffer(1) // left side bearing
+			stbtt_GetCodepointHMetrics(info, c, pAW, pLSB);
+
+			// (Note that each Codepoint call has an alternative Glyph version which caches the work
+			// required to lookup the character word[i].)
+
+			// get bounding box for character (may be offset to account for chars that dip above or below the line
+			val pX1 = BufferUtils.createIntBuffer(1)
+			val pY1 = BufferUtils.createIntBuffer(1)
+			val pX2 = BufferUtils.createIntBuffer(1)
+			val pY2 = BufferUtils.createIntBuffer(1)
+			stbtt_GetCodepointBitmapBox(info, c, scale, scale, pX1, pY1, pX2, pY2);
+
+			// compute y (different characters have different heights
+			val y = ascent + pY1.get
+
+			// render character (stride and offset is important here)
+			val byteOffset = 17 // TODO x + roundf(lsb * scale) + (y * b_w);
+			// stbtt_MakeCodepointBitmap(&info, bitmap + byteOffset, c_x2 - c_x1, c_y2 - c_y1, b_w, scale, scale, word[i]);
+
+			// advance x
+			// x += roundf(ax * scale);
+
+			// add kerning
+			// int kern;
+			// kern = stbtt_GetCodepointKernAdvance(&info, word[i], word[i + 1]);
+			// x += roundf(kern * scale);
+
+			println(pAW.get(0))

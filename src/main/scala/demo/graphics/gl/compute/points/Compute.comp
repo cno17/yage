@@ -1,0 +1,24 @@
+#version 460 core
+
+layout(local_size_x = 1) in;
+
+layout(location = 0) uniform float time;
+
+layout(std430, binding = 0) buffer points {
+  vec2[] pos;
+};
+
+
+
+void main() {
+  int i = int(gl_GlobalInvocationID.x);
+  float t = time * (i + 1);
+  float r = (1.0 + cos(t * 0.1)) * 0.5;
+  float x = r * sin(t);
+  float y = r * cos(t);
+  pos[i] = vec2(x, y);
+}
+
+
+/*
+*/

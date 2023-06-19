@@ -1,0 +1,23 @@
+#version 460 core
+
+layout(local_size_x = 32, local_size_y = 32) in;
+
+layout(location = 0) uniform float time;
+layout(location = 1) uniform float mouseU;
+layout(location = 2) uniform float mouseV;
+
+layout(binding = 0) uniform writeonly image2D image;
+
+float circle(float u, float v, float r) {
+  return step(r, length(vec2(u - 0.5, v - 0.5)));
+}
+
+void main() {
+  uint i = gl_GlobalInvocationID.x;
+  uint j = gl_GlobalInvocationID.y;
+  float u = float(i) / imageSize(image).x;
+  float v = float(j) / imageSize(image).y;
+  float c = circle(u, v, 0.25);
+  imageStore(image, ivec2(i, j), vec4(c, c, c, 1.0));
+}
+

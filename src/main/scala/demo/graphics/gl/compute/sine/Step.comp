@@ -1,0 +1,53 @@
+#version 460 core
+
+layout(local_size_x = 32, local_size_y = 32) in;
+
+layout(location = 0) uniform int step;
+
+layout(binding = 0, rgba32f) uniform writeonly image2D image;
+
+void main() {
+  ivec2 s = imageSize(image).xy;
+  ivec2 c = s / 2;
+  uvec2 p = gl_GlobalInvocationID.xy;
+  float d = distance(c, p);
+  float r = abs(sin((d + step) * 0.1));
+  float g = abs(cos((d + step) * 0.2));
+  float b = abs(cos((d + step) * 0.3));
+
+  imageStore(image, ivec2(p), vec4(r, g, b, 1.0));
+}
+
+void mainOld() {
+  int si = imageSize(image).x;
+  int sj = imageSize(image).y;
+  uint i = gl_GlobalInvocationID.x;
+  uint j = gl_GlobalInvocationID.y;
+
+  float r = abs(sin(float(i + step) * 0.01));
+  float g = abs(cos(float(j + step) * 0.02));
+  float b = abs(cos(float(i + j + step) * 0.003));
+
+  imageStore(image, ivec2(i, j), vec4(r, g, b, 1.0));
+}
+
+/*
+
+layout(local_size_x = 32, local_size_y = 32) in;
+
+layout(binding = 0, rgba32f) uniform writeonly image2D image;
+
+void main() {
+  uint i = gl_GlobalInvocationID.x;
+  uint j = gl_GlobalInvocationID.y;
+  // float r = abs(sin(float(i)));
+  float r = float(i) / 256;
+  float g = 0.5;
+  ivec2 pos = ivec2(i, j);
+  // vec4 col = vec4(r, g, 0.0, 1.0);
+  vec4 col = vec4(r, g, 0.0, 1.0);
+  imageStore(image, pos, col);
+}
+
+
+*/

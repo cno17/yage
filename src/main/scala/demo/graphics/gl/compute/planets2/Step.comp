@@ -1,0 +1,60 @@
+#version 460 core
+
+struct Sun {
+  float mass;
+  vec2 pos;
+};
+
+struct Planet {
+  float mass;
+  vec2 pos;
+  vec2 vel;
+};
+
+layout(local_size_x = 4) in;
+
+layout(std430, binding = 0) buffer SunMass {
+  float[] sms;
+};
+
+layout(std430, binding = 1) buffer SunPos {
+  vec2[] sps;
+};
+
+layout(std430, binding = 2) buffer PlanetMass {
+  float[] pms;
+};
+
+layout(std430, binding = 3) buffer PlanetPos {
+  vec2[] pps;
+};
+
+layout(std430, binding = 4) buffer PlanetVel {
+  vec2[] pvs;
+};
+
+layout(location = 2) uniform float dt = 0.0005;
+
+void main() {
+  int i = int(gl_GlobalInvocationID.x);
+  vec2 pp = pps[i];
+  vec2 pv = pvs[i];
+  vec2 pf = vec2(0);
+  for (int j = 0; j < sms.length(); j++) {
+    vec2 d = sps[j] - pp;
+    pf += (pms[i] * sms[j] / pow(d.length(), 2.5)) * d; 
+  }
+  pv += dt * pf / pms[i]; 
+  pp += dt * pv;
+  pps[i] = pp; 
+  pvs[i] = pv; 
+}
+
+
+
+/*
+vec2 sunForce(int i, float dt) {
+  vec2 dir1 = sunPos1 - pos[i];
+  float len1 = dir1.length() 
+}
+*/

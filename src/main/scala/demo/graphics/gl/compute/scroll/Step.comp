@@ -1,0 +1,27 @@
+#version 460 core
+
+layout(local_size_x = 32, local_size_y = 32) in;
+
+layout(rgba32f) uniform image2D imageR; // readonly
+layout(rgba32f) uniform image2D imageW;
+
+uniform int si;
+uniform int sj;
+
+uniform ivec2 len;
+uniform ivec2 inc;
+
+float rand(vec2 p) {
+  return fract(sin(dot(p, vec2(12.9898, 78.2330))) * 43758.5453);
+}
+
+void main() {
+
+  uint ir = gl_GlobalInvocationID.x;
+  uint jr = gl_GlobalInvocationID.y;
+  if (ir < si && jr < sj) {
+    uint iw = ir < si - 1 ? ir + 1 : 0;
+    uint jw = jr;
+    imageStore(imageW, ivec2(iw, jw), imageLoad(imageR, ivec2(ir, jr)));
+  }
+}

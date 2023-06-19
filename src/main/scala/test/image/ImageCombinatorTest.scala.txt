@@ -1,0 +1,46 @@
+package test.image
+
+import java.io.File
+import javax.imageio.ImageIO
+import yage.image.grid.Pixel
+import yage.image.grid.iterator.ForwardIterator
+import yage.image.producer.operator.float.ImageCombinatorF
+import yage.image.producer.generator.util.Hill
+import yage.image.util.AwtAdapter
+import yage.image.ImageF
+
+object ImageCombinatorTest:
+
+  def main(args: Array[String]) = test3
+  
+  def test1 =
+    val min = Pixel(0, 0)
+    val max = Pixel(255, 255)
+    var imgL = ImageF(min, max)
+    var imgS = Hill(imgL.rndP, 10).createImage
+    val op = ImageCombinatorF()
+    op.args += imgL
+    op.args += imgS
+    imgL = op.exec.asInstanceOf[ImageF]    
+    ImageIO.write(AwtAdapter.toBufferedImage(imgL), "jpg", File("Image.jpg"))
+    println("ok")
+
+  def test2 =
+    var img = ImageF(Pixel(100, 100), Pixel(300, 300))
+    // ImageF(Pixel(150, 150), Pixel(250, 350)).foreachP(img.multiApplyAt(p => img(p) += 1))
+    val img1 = ImageF(Pixel(150, 150), Pixel(250, 250))
+    img1.foreachP(p => img.multiApplyAt(p => img(p) += 1)(p))
+    val img2 = ImageF(Pixel(280, 150), Pixel(380, 250))
+    img2.foreachP(p => img.multiApplyAt(p => img(p) += 1)(p))
+    ImageIO.write(AwtAdapter.toBufferedImage(img), "jpg", File("Image.jpg"))
+    println("ok")
+
+  def test3 =
+    val img = ImageF(Pixel(0, 0), Pixel(400, 400))
+    for i <- 0 to 100 do
+      val img1 = Hill(img.rndP, 30).createImage
+      for p <- ForwardIterator(img1) do
+        val v = img1(p)
+        img.multiApplyAt(p => img(p) = img(p) + v)(p)
+    ImageIO.write(AwtAdapter.toBufferedImage(img), "jpg", File("Image.jpg"))
+    println(img.isToroidal)

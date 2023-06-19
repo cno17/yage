@@ -1,0 +1,31 @@
+package test.image.grid
+
+import yage.image.grid.Grid
+import yage.image.grid.Pixel
+import yage.image.ImageF
+
+object GridMapperTest:
+
+  def main(args: Array[String]) =
+    val img1 = new ImageF(Grid(0, 0)(10, 10))
+    val img2 = new ImageF(Grid(8, 5)(12, 8))
+    img2.foreachP(p => img2(p) = 2)
+    // img2.foreachP(p => img1.multiApplyAt(p => img1(p) += img2(p))(p))
+    // img1.multiApplyAt(p => img1(p) += img2(p))(Pixel(12, 5))
+    add(img1, img2)
+    printImg(img1)
+
+  def add(img1: ImageF, img2: ImageF) =
+    val p = Pixel.ofDim(img1.dim)
+    for i <- 0 to img2.size - 1 do
+      val v = img2(img2.toPixel(i, p))
+      img1.multiApplyAt(p => img1(p) += v)(p)
+
+  def printImg(img: ImageF) =
+    val p = Pixel.ofDim(img.dim)
+    for i1 <- 0 to img.size(1) - 1 do
+      p(1) = i1
+      for i0 <- 0 to img.size(0) - 1 do
+        p(0) = i0
+        print(s"${img(p)}  ")
+      println

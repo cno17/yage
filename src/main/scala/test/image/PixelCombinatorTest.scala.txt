@@ -1,0 +1,23 @@
+package test.image
+
+import java.io.File
+import javax.imageio.ImageIO
+import yage.image.grid.Grid
+import yage.image.grid.Pixel
+import yage.image.producer.combinator.PixelCombinator
+import yage.image.producer.generator.util.Hill
+import yage.image.util.AwtAdapter
+import yage.image.ImageF
+
+object PixelCombinatorTest:
+
+  def main(args: Array[String]) =
+    val ic = new PixelCombinator
+    ic.img1 = new ImageF(Grid(0, 0)(512, 512))
+    for i <- 0 to 100 do
+      val c = ic.img1.rndP
+      val r = 50.0f
+      ic.img2 = Hill(c, r).createImage
+      ic.produceImage
+    ImageIO.write(AwtAdapter.toBufferedImage(ic.img1), "jpg", new File("Image.jpg"))
+    println(ic.img1.isToroidal)
